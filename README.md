@@ -1,7 +1,4 @@
-🚀 TERRABIA - Plateforme E-commerce de Produits Terroir
-https://img.shields.io/badge/mise%2520%C3%A0%2520jour-13%2520d%C3%A9c%25202025-blue
-https://img.shields.io/badge/architecture-microservices-green
-https://img.shields.io/badge/langage-Python%252097.6%2525-yellow
+🚀  TERRABIA - Plateforme E-commerce de Produits Terroir 
 
 Une plateforme e-commerce moderne et modulaire spécialisée dans la vente de produits du terroir, construite avec une architecture de microservices.
 
