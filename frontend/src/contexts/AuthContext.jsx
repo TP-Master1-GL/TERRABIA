@@ -27,8 +27,23 @@ export const AuthProvider = ({ children }) => {
   const fetchProfile = async () => {
     try {
       const response = await authAPI.getProfile();
-      setUser(response.data);
-      localStorage.setItem('user', JSON.stringify(response.data));
+      const userData = response.data;
+      
+      // Mapping des rôles au chargement
+      const roleMapping = {
+        'vendeur': 'farmer',
+        'livreur': 'driver', 
+        'acheteur': 'buyer',
+        'admin': 'admin'
+      };
+      
+      const normalizedUser = {
+        ...userData,
+        role: roleMapping[userData.role] || userData.role || 'buyer'
+      };
+      
+      setUser(normalizedUser);
+      localStorage.setItem('user', JSON.stringify(normalizedUser));
     } catch (error) {
       console.error('Error fetching profile:', error);
       logout();
@@ -42,7 +57,6 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const response = await authAPI.login(credentials);
       
-      // Adaptation selon la structure de réponse de votre backend (support des deux formats)
       const data = response.data;
       const accessToken = data.accessToken || data.access || data.token;
       const refreshToken = data.refreshToken || data.refresh;
@@ -59,17 +73,32 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('refreshToken', refreshToken);
       }
       
+      // MAPPING DES RÔLES CRITIQUE
+      const roleMapping = {
+        'vendeur': 'farmer',
+        'livreur': 'driver',
+        'acheteur': 'buyer', 
+        'admin': 'admin'
+      };
+      
+      const frontendRole = roleMapping[userData.role] || userData.role || 'buyer';
+      
       // Normaliser les données utilisateur
       const normalizedUser = {
         ...userData,
         name: userData.name || userData.username || userData.email?.split("@")[0],
-        email: userData.email || credentials.email
+        email: userData.email || credentials.email,
+        role: frontendRole  // Rôle mappé pour le frontend
       };
       
       setUser(normalizedUser);
       localStorage.setItem('user', JSON.stringify(normalizedUser));
       
-      return { success: true, user: normalizedUser };
+      return { 
+        success: true, 
+        user: normalizedUser,
+        redirectTo: getDashboardPath(frontendRole)
+      };
     } catch (error) {
       console.error('Login error:', error);
       const errorMessage = error.response?.data?.error || 
@@ -85,11 +114,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Fonction pour obtenir le chemin du dashboard selon le rôle
+  const getDashboardPath = (role) => {
+    switch(role) {
+      case 'farmer': return '/farmer/dashboard';
+      case 'driver': return '/driver/dashboard';
+      case 'admin': return '/admin/dashboard';
+      case 'buyer': 
+      default: return '/buyer/dashboard';
+    }
+  };
+
   const register = async (userData) => {
     try {
       setLoading(true);
       
-      // Adaptation des données pour correspondre à votre backend
       const registerData = {
         email: userData.email,
         password: userData.password,
@@ -101,7 +140,6 @@ export const AuthProvider = ({ children }) => {
       
       const response = await authAPI.register(registerData);
       
-      // Gestion de la réponse selon votre backend (support des deux formats)
       const data = response.data;
       const accessToken = data.accessToken || data.access || data.token;
       const refreshToken = data.refreshToken || data.refresh;
@@ -113,7 +151,6 @@ export const AuthProvider = ({ children }) => {
         name: registerData.username
       };
       
-      // Stockage des tokens
       if (accessToken) {
         tokenService.setToken(accessToken);
       }
@@ -121,18 +158,29 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('refreshToken', refreshToken);
       }
       
-      // Normaliser les données utilisateur
+      // Mapping du rôle pour l'inscription aussi
+      const roleMapping = {
+        'vendeur': 'farmer',
+        'livreur': 'driver',
+        'acheteur': 'buyer',
+        'admin': 'admin'
+      };
+      
       const normalizedUser = {
         ...newUser,
         name: newUser.name || newUser.username || registerData.username,
         email: newUser.email || registerData.email,
-        role: newUser.role || registerData.role
+        role: roleMapping[newUser.role] || newUser.role || 'buyer'
       };
       
       setUser(normalizedUser);
       localStorage.setItem('user', JSON.stringify(normalizedUser));
       
-      return { success: true, user: normalizedUser };
+      return { 
+        success: true, 
+        user: normalizedUser,
+        redirectTo: getDashboardPath(normalizedUser.role)
+      };
     } catch (error) {
       console.error('Registration error:', error);
       const errorMessage = error.response?.data?.error || 
@@ -204,6 +252,7 @@ export const AuthProvider = ({ children }) => {
     refreshToken,
     loading,
     isAuthenticated: !!user && tokenService.isValid(),
+    getDashboardPath: (role) => getDashboardPath(role || user?.role)
   };
 
   return (
