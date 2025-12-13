@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: terra-users-service
-        image: nguembu/terrabia-web-terra-users-service:latest
+        image: nguembu/terrabia-terra-users-service:latest
         env:
         - name: DJANGO_SETTINGS_MODULE
           value: "terra_users_service.user_service.settings"

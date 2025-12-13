@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: terra-conf-service
-        image: nguembu/terrabia-web-terra-conf-service:latest
+        image: nguembu/terrabia-terra-conf-service:latest
         env:
         - name: SPRING_APPLICATION_NAME
           value: "terra-conf-service"

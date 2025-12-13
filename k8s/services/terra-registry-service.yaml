@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: terra-registry-service
-        image: nguembu/terrabia-web-terra-registry-service:latest
+        image: nguembu/terrabia-terra-registry-service:latest
         env:
         - name: SPRING_APPLICATION_NAME
           value: "terra-registry-service"

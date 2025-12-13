@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: nguembu/terrabia-web-frontend:latest
+        image: nguembu/terrabia-frontend:latest
         env:
         - name: VITE_API_GATEWAY_URL
           value: "http://terra-proxy-service:8082"

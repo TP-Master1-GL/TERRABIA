@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: terra-product-service
-        image: nguembu/terrabia-web-terra-product-service:latest
+        image: nguembu/terrabia-terra-product-service:latest
         env:
         - name: DJANGO_SETTINGS_MODULE
           value: "terra_product_service.settings"

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: terra-proxy-service
-        image: nguembu/terrabia-web-terra-proxy-service:latest
+        image: nguembu/terrabia-terra-proxy-service:latest
         env:
         - name: SPRING_APPLICATION_NAME
           value: "terra-proxy-service"
